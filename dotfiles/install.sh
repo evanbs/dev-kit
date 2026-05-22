@@ -35,6 +35,9 @@ link "$DOTFILES_DIR/zsh/.zshrc.local"         "$HOME/.zshrc.local"
 # Perfil global do Claude Code — vai para ~/.claude/CLAUDE.md
 link "$DOTFILES_DIR/.claude/CLAUDE.md"        "$HOME/.claude/CLAUDE.md"
 
+# Scripts de dev — new-project e futuros utilitários
+link "$DOTFILES_DIR/bin/new-project"          "$HOME/.local/bin/new-project"
+
 # Só instala ferramentas fora do devcontainer (WSL2 / máquina física)
 if ! is_devcontainer; then
     echo "→ host environment detected, installing tools..."

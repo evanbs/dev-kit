@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ── Config ────────────────────────────────────────────────────────────────────
+DEV_KIT_PATH="${DEV_KIT_PATH:-$HOME/workspace/dev-kit}"
+WORKSPACE="${WORKSPACE:-$HOME/workspace}"
+TEMPLATES_DIR="$DEV_KIT_PATH/templates"
+
+# ── Cores ─────────────────────────────────────────────────────────────────────
+BOLD=$'\033[1m'
+DIM=$'\033[2m'
+GREEN=$'\033[0;32m'
+CYAN=$'\033[0;36m'
+YELLOW=$'\033[0;33m'
+NC=$'\033[0m'
+
+# ── Descrições das stacks ─────────────────────────────────────────────────────
+stack_description() {
+    case "$1" in
+        node)   echo "Node.js + TypeScript · pnpm · ESLint + Prettier" ;;
+        bun)    echo "Bun runtime + TypeScript · Bun package manager" ;;
+        python) echo "Python · uv · Ruff (lint + format)" ;;
+        dotnet) echo ".NET 9 (C#) · nullable refs · minimal APIs" ;;
+        java)   echo "Java 21 · Maven ou Gradle · Spring Boot ready" ;;
+        custom) echo "Configuração manual · só cria o diretório" ;;
+        *)      echo "$1" ;;
+    esac
+}
+
+# ── Header ────────────────────────────────────────────────────────────────────
+echo ""
+echo "${BOLD}  new-project${NC} ${DIM}— dev-kit wizard${NC}"
+echo ""
+
+# ── Verificar dev-kit ─────────────────────────────────────────────────────────
+if [ ! -d "$TEMPLATES_DIR" ]; then
+    echo "  ${YELLOW}⚠${NC}  templates não encontrados em ${BOLD}$TEMPLATES_DIR${NC}"
+    echo "     Configure DEV_KIT_PATH ou clone dev-kit em ~/workspace/dev-kit"
+    echo ""
+    exit 1
+fi
+
+# ── Nome do projeto ───────────────────────────────────────────────────────────
+printf "  ${BOLD}Nome do projeto:${NC} "
+read -r project_name
+
+if [ -z "$project_name" ]; then
+    echo "  Nome não pode ser vazio." >&2
+    exit 1
+fi
+
+project_dir="$WORKSPACE/$project_name"
+
+if [ -d "$project_dir" ]; then
+    echo ""
+    echo "  ${YELLOW}⚠${NC}  Diretório já existe: ${BOLD}$project_dir${NC}"
+    printf "     Continuar mesmo assim? [s/N] "
+    read -r confirm
+    [[ "$confirm" =~ ^[sS]$ ]] || exit 0
+fi
+
+# ── Seleção de stack ──────────────────────────────────────────────────────────
+echo ""
+
+# Monta lista de stacks disponíveis + custom
+available=()
+while IFS= read -r d; do
+    available+=("$(basename "$d")")
+done < <(find "$TEMPLATES_DIR" -mindepth 1 -maxdepth 1 -type d | sort)
+available+=("custom")
+
+if command -v fzf &>/dev/null; then
+    # Seleção interativa com fzf + preview de descrição
+    stack=$(
+        printf '%s\n' "${available[@]}" \
+        | fzf \
+            --prompt="  Stack: " \
+            --height=12 \
+            --border=rounded \
+            --margin=1,2 \
+            --info=hidden \
+            --preview="bash -c 'source \"$DEV_KIT_PATH/dotfiles/bin/new-project\" 2>/dev/null; stack_description {}' 2>/dev/null || true" \
+            --preview-window="right:40%:wrap" \
+            --color="prompt:cyan,pointer:green,selected-bg:236"
+    )
+else
+    # Fallback: menu numerado
+    echo "  ${BOLD}Stack:${NC}"
+    for i in "${!available[@]}"; do
+        desc=$(stack_description "${available[$i]}")
+        printf "  ${CYAN}%2d)${NC} %-10s ${DIM}%s${NC}\n" "$((i+1))" "${available[$i]}" "$desc"
+    done
+    echo ""
+    printf "  Escolha [1-${#available[@]}]: "
+    read -r choice
+    stack="${available[$((choice-1))]}"
+fi
+
+if [ -z "$stack" ]; then
+    echo "  Nenhuma stack selecionada." >&2
+    exit 1
+fi
+
+echo ""
+
+# ── Criar projeto ─────────────────────────────────────────────────────────────
+if [ "$stack" = "custom" ]; then
+    mkdir -p "$project_dir/.devcontainer"
+    cat > "$project_dir/.devcontainer/devcontainer.json" <<EOF
+{
+  "name": "$project_name",
+  "image": "ghcr.io/evanbs/devbase:latest",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": { "path": "zsh", "args": ["-l"] }
+        }
+      }
+    }
+  },
+  "postCreateCommand": "command -v devbase-setup >/dev/null 2>&1 && devbase-setup || true"
+}
+EOF
+    echo "  ${GREEN}✓${NC} Projeto criado: ${BOLD}$project_dir${NC}"
+    echo "  ${DIM}Configuração manual — edite .devcontainer/devcontainer.json${NC}"
+else
+    cp -r "$TEMPLATES_DIR/$stack/." "$project_dir"
+
+    # Substituir {{PROJECT_NAME}} em todos os arquivos de texto
+    find "$project_dir" -type f \( -name "*.json" -o -name "*.md" -o -name "*.toml" -o -name "*.yml" \) \
+        -exec sed -i "s/{{PROJECT_NAME}}/$project_name/g" {} +
+
+    echo "  ${GREEN}✓${NC} Projeto criado: ${BOLD}$project_dir${NC} ${DIM}(stack: $stack)${NC}"
+fi
+
+# ── Abrir no VS Code ──────────────────────────────────────────────────────────
+echo ""
+if command -v code &>/dev/null; then
+    printf "  Abrir no VS Code? [S/n] "
+    read -r open_code
+    if [[ ! "$open_code" =~ ^[nN]$ ]]; then
+        code "$project_dir"
+        echo "  ${GREEN}✓${NC} VS Code aberto"
+    fi
+else
+    echo "  ${DIM}VS Code não encontrado no PATH — abra manualmente: code $project_dir${NC}"
+fi
+
+echo ""
+echo "  ${DIM}Próximo passo: 'Reopen in Container' → 'initialize project'${NC}"
+echo ""

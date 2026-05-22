@@ -1,6 +1,9 @@
 # .zshrc.local — sourced pelo .zshrc principal
 # Configurações pessoais que complementam o ambiente devbase
 
+# Scripts pessoais
+export PATH="$HOME/.local/bin:$PATH"
+
 # aliases locais
 [ -f "$HOME/.aliases.local" ] && source "$HOME/.aliases.local"
 
