@@ -72,4 +72,7 @@ RUN chown -R vscode:vscode /home/vscode/.config
 RUN mkdir -p /home/vscode/.claude/skills \
     && chown -R vscode:vscode /home/vscode/.claude
 
+# Workspace mount point para devcontainers
+RUN mkdir -p /workspace && chown vscode:vscode /workspace
+
 USER vscode
