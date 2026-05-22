@@ -32,10 +32,9 @@ RUN curl -fsSL \
     && mv /tmp/eza /usr/local/bin/eza \
     && chmod +x /usr/local/bin/eza
 
-# AI agents — Claude Code e Kiro CLI
-RUN npm install -g \
-    @anthropic-ai/claude-code \
-    @aws/kiro-cli
+# AI agents — Claude Code
+RUN npm install -g @anthropic-ai/claude-code
+# TODO: adicionar Kiro CLI quando disponível no npm (@aws/kiro-cli não existe ainda)
 
 # httpyac
 RUN npm install -g httpyac
