@@ -1,0 +1,39 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "image": "ghcr.io/evanbs/devbase:latest",
+  "workspaceFolder": "/workspace",
+
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": { "version": "21", "jdkDistro": "ms" }
+  },
+
+  "forwardPorts": [
+    // 8080    // Spring Boot
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-spring-boot",
+        "editorconfig.editorconfig",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker",
+        "Anthropic.claude-code"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": { "path": "zsh", "args": ["-l"] }
+        },
+        "editor.formatOnSave": true
+      }
+    }
+  },
+
+  "postCreateCommand": "command -v devbase-setup >/dev/null 2>&1 && devbase-setup || true",
+
+  "remoteEnv": {
+    // "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
+  }
+}

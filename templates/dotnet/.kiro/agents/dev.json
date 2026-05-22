@@ -1,0 +1,14 @@
+{
+  "name": "dev",
+  "description": "Agente principal de desenvolvimento — spec-driven com tlc-spec-driven",
+  "model": "claude-sonnet-4-5",
+  "tools": ["read", "write", "shell"],
+  "allowedTools": ["read"],
+  "resources": [
+    "file://AGENTS.md",
+    "file://.specs/project/PROJECT.md",
+    "file://.specs/project/ROADMAP.md",
+    "file://.specs/project/STATE.md",
+    "skill://.kiro/skills/tlc-spec-driven/SKILL.md"
+  ]
+}

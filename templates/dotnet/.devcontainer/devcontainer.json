@@ -1,0 +1,40 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "image": "ghcr.io/evanbs/devbase:latest",
+  "workspaceFolder": "/workspace",
+
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": { "version": "9.0" }
+  },
+
+  "forwardPorts": [
+    // 5000,   // ASP.NET HTTP
+    // 5001    // ASP.NET HTTPS
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "editorconfig.editorconfig",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker",
+        "Anthropic.claude-code"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": { "path": "zsh", "args": ["-l"] }
+        },
+        "editor.formatOnSave": true
+      }
+    }
+  },
+
+  "postCreateCommand": "command -v devbase-setup >/dev/null 2>&1 && devbase-setup || true",
+
+  "remoteEnv": {
+    // "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
+  }
+}

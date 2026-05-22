@@ -34,7 +34,12 @@ RUN curl -fsSL \
 
 # AI agents — Claude Code
 RUN npm install -g @anthropic-ai/claude-code
-# TODO: adicionar Kiro CLI quando disponível no npm (@aws/kiro-cli não existe ainda)
+
+# Kiro CLI — instala via script oficial, move binário para PATH global
+RUN curl -fsSL https://cli.kiro.dev/install | bash \
+    && mv /root/.local/bin/kiro-cli /usr/local/bin/kiro-cli \
+    && ln -sf /usr/local/bin/kiro-cli /usr/local/bin/kiro \
+    && rm -rf /root/.local
 
 # httpyac
 RUN npm install -g httpyac

@@ -1,0 +1,37 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "image": "ghcr.io/evanbs/devbase:latest",
+  "workspaceFolder": "/workspace",
+
+  "forwardPorts": [
+    // 3000,   // Bun serve / Elysia
+    // 5432    // PostgreSQL
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "oven.bun-vscode",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "editorconfig.editorconfig",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker",
+        "Anthropic.claude-code"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": { "path": "zsh", "args": ["-l"] }
+        },
+        "editor.formatOnSave": true
+      }
+    }
+  },
+
+  "postCreateCommand": "command -v devbase-setup >/dev/null 2>&1 && devbase-setup || true",
+
+  "remoteEnv": {
+    // "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
+  }
+}
