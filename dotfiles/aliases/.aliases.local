@@ -1,0 +1,22 @@
+# aliases pessoais — complementa os aliases da imagem devbase
+
+# workspace shortcuts
+alias ws='cd ~/workspace'
+alias dk='cd ~/workspace/dev-kit'
+
+# git extras
+alias gco='git checkout'
+alias gd='git diff'
+alias gdc='git diff --cached'
+alias gb='git branch'
+alias gst='git stash'
+alias gstp='git stash pop'
+alias grb='git rebase'
+alias gri='git rebase -i'
+alias gcp='git cherry-pick'
+
+# dev
+alias nr='npm run'
+alias pn='pnpm'
+alias pnr='pnpm run'
+alias pi='pnpm install'
