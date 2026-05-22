@@ -1,0 +1,10 @@
+services:
+  app:
+    # No projeto derivado, descomente 'build' se precisar customizar a imagem base localmente
+    # build:
+    #   context: ..
+    #   dockerfile: Dockerfile
+    image: ghcr.io/evanbs/devbase:latest
+    command: sleep infinity
+    volumes:
+      - ..:/workspace:cached

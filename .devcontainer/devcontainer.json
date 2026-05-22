@@ -1,0 +1,76 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+
+  // ── Stack features (uncomment what the project needs) ──────────────────
+  "features": {
+    // "ghcr.io/devcontainers/features/java:1": { "version": "21" },
+    // "ghcr.io/devcontainers/features/python:1": { "version": "3.12" },
+    // "ghcr.io/devcontainers/features/rust:1": {},
+    // "ghcr.io/devcontainers/features/android:1": {}
+  },
+
+  // ── Forwarded ports (uncomment what the project needs) ─────────────────
+  "forwardPorts": [
+    // 3000,   // web / Next.js / React
+    // 8080,   // API / Spring Boot
+    // 5432,   // PostgreSQL
+    // 6379,   // Redis
+    // 27017   // MongoDB
+  ],
+
+  // ── VS Code extensions ──────────────────────────────────────────────────
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Essenciais
+        "editorconfig.editorconfig",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker",
+        "gruntfuggly.todo-tree",
+        "christian-kohler.path-intellisense",
+        "sleistner.vscode-fileutils",
+        "mkxml.vscode-filesize",
+        "Anthropic.claude-code",
+        "saoudrizwan.claude-dev",
+        "openai.chatgpt",
+        
+        // Docker
+        "ms-azuretools.vscode-containers",
+        
+        // Markdown & Docs
+        "yzhang.markdown-all-in-one",
+        "bierner.markdown-mermaid",
+        
+        // API & HTTP
+        "anweber.vscode-httpyac",
+        
+        // Qualidade
+        "nhoizey.gremlins",
+        "redhat.vscode-xml",
+        
+        // Visual
+        "kisstkondoros.vscode-gutter-preview",
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": { "path": "zsh", "args": ["-l"] }
+        },
+        "editor.formatOnSave": true
+      }
+    }
+  },
+
+  // ── Post-create setup ──────────────────────────────────────────────────
+  "postCreateCommand": "command -v devbase-setup >/dev/null 2>&1 && devbase-setup || true",
+
+  // ── Environment variables ──────────────────────────────────────────────
+  "remoteEnv": {
+    // Variáveis de projeto (use localEnv — nunca hardcode):
+    // "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    // "GH_TOKEN":          "${localEnv:GH_TOKEN}"
+  }
+}

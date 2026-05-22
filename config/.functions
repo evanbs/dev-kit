@@ -1,0 +1,80 @@
+# devbase functions
+
+# Copy to clipboard (works inside devcontainer via xclip or pbcopy)
+clip() {
+    if command -v xclip &>/dev/null; then
+        xclip -selection clipboard
+    elif command -v pbcopy &>/dev/null; then
+        pbcopy
+    else
+        echo "clip: no clipboard tool found (xclip / pbcopy)" >&2
+        return 1
+    fi
+}
+
+# mkdir + cd
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# cd with fzf fuzzy-finder
+fcd() {
+    local dir
+    dir=$(find "${1:-.}" -type d 2>/dev/null | fzf +m) && cd "$dir"
+}
+
+# ripgrep + fzf: search file contents interactively
+rgfzf() {
+    rg --color=always --line-number "${1:-.}" \
+        | fzf --ansi \
+              --delimiter : \
+              --preview 'bat --style=numbers --color=always --highlight-line {2} {1}' \
+              --preview-window 'right:50%:+{2}+3/3'
+}
+
+# Unpack any archive
+extract() {
+    if [ -z "$1" ]; then
+        echo "Usage: extract <arquivo>" >&2
+        return 1
+    fi
+    case "$1" in
+        *.tar.bz2)  tar xjf "$1"   ;;
+        *.tar.gz)   tar xzf "$1"   ;;
+        *.tar.xz)   tar xJf "$1"   ;;
+        *.tar)      tar xf  "$1"   ;;
+        *.bz2)      bunzip2 "$1"   ;;
+        *.gz)       gunzip  "$1"   ;;
+        *.zip)      unzip   "$1"   ;;
+        *.7z|*.rar) 7z x    "$1"   ;;
+        *)          echo "extract: formato não suportado — $1" >&2; return 1 ;;
+    esac
+}
+
+# Initialize devcontainer from devbase template
+devcontainer-init() {
+    local project_name="${1:-$(basename "$(pwd)")}"
+    local devbase_path="${DEVBASE_PATH:-$HOME/workspace/devbase}"
+    
+    if [ ! -d "$devbase_path/.devcontainer" ]; then
+        echo "❌ Erro: Template não encontrado em $devbase_path/.devcontainer" >&2
+        echo "   Configure DEVBASE_PATH ou clone devbase em ~/workspace/devbase" >&2
+        return 1
+    fi
+    
+    if [ -d ".devcontainer" ]; then
+        echo "⚠️  Aviso: .devcontainer/ já existe neste diretório" >&2
+        read -q "?Sobrescrever? (y/N) " && echo || return 1
+    fi
+    
+    mkdir -p .devcontainer
+    cp "$devbase_path/.devcontainer/devcontainer.json" .devcontainer/
+    cp "$devbase_path/.devcontainer/docker-compose.yml" .devcontainer/
+    
+    # Substituir {{PROJECT_NAME}} pelo nome do projeto (trata espaços corretamente)
+    # Usa | como delimitador no sed para evitar problemas com caracteres especiais
+    sed -i "s|{{PROJECT_NAME}}|$project_name|g" .devcontainer/devcontainer.json
+    
+    echo "✅ Devcontainer criado para '$project_name'!"
+    echo "   Edite .devcontainer/ para adicionar features, portas e serviços."
+}

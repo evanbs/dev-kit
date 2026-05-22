@@ -1,0 +1,6 @@
+PROGRESS.md
+.claude/
+!dotfiles/.claude/
+node_modules/
+.env
+*.bak

@@ -1,0 +1,43 @@
+# devbase aliases — sourced from dev-dotfiles (Ansible-managed on host)
+
+# eza
+alias ls='eza --icons=always --color=always --group-directories-first'
+alias l='eza --icons=always --color=always --group-directories-first --git --git-repos --long --no-permissions --no-user --no-time --no-filesize'
+alias ll='eza --icons=always --color=always --group-directories-first --git --git-repos --long --octal-permissions --header'
+alias la='eza --icons=always --color=always --group-directories-first --git --git-repos --long --octal-permissions --header --all'
+alias tree='eza --icons=always --color=always --group-directories-first --tree'
+
+# bat as cat replacement
+alias cat='bat --paging=never'
+
+# httpyac
+alias http='httpyac'
+
+# git shortcuts
+alias g='git'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git log --oneline --graph --decorate'
+
+# navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias cl='clear'
+
+# aws (DynamoDB Local :8000 / MinIO :9000 via AWS_ENDPOINT_URL_*)
+alias awsw='aws sts get-caller-identity'
+alias s3ls='aws s3 ls'
+alias s3cp='aws s3 cp'
+alias s3sync='aws s3 sync'
+alias dynls='aws dynamodb list-tables'
+alias dynget='aws dynamodb get-item'
+alias dynscan='aws dynamodb scan'
+alias dynput='aws dynamodb put-item'
+
+# docker
+alias dk='docker'
+alias dkc='docker compose'
+alias dkps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
