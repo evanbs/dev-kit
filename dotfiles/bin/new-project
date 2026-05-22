@@ -51,6 +51,8 @@ fi
 
 project_dir="$WORKSPACE/$project_name"
 
+mkdir -p "$WORKSPACE"
+
 if [ -d "$project_dir" ]; then
     echo ""
     echo "  ${YELLOW}⚠${NC}  Diretório já existe: ${BOLD}$project_dir${NC}"
